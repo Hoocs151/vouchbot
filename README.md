@@ -1,4 +1,4 @@
-# Basic VouchBot
+# VouchBot
 
 A Discord bot for managing vouches and reviews.
 
@@ -31,34 +31,60 @@ vouchbot/
 │   ├── services/         # Business logic and services
 │   ├── utils/            # Utility functions
 │   ├── config/           # Configuration files
-│   └── index.js          # Main application entry point
+│   ├── data/            # Data storage
+│   └── index.js         # Main application entry point
 ├── package.json
 └── README.md
 ```
 
 ## Setup
 
-1. Clone the repository
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/vouchbot.git
+   cd vouchbot
+   ```
+
 2. Install dependencies:
    ```bash
    npm install
    ```
+
 3. Configure the bot:
    - Copy `src/config/config.json.example` to `src/config/config.json`
-   - Fill in your bot token and other configuration
+   - Fill in your bot token and other configuration:
+     - `token`: Your Discord bot token
+     - `clientId`: Your bot's client ID
+     - `guildId`: Your server's ID
+     - `vouchChannelId`: ID of the channel where vouches will be posted
+     - `ownerId`: Your Discord user ID
+
 4. Start the bot:
    ```bash
-   node src/index.js
+   npm start
+   ```
+
+   For development with auto-restart:
+   ```bash
+   npm run dev
    ```
 
 ## Commands
 
 - `/vouch` - Submit a new vouch review
-  - `review`: Your review text
+  - `review`: Your review text (max 1000 characters)
   - `stars`: Rating (1-5 stars)
   - `attachment`: Optional image attachment
 - `/restore` - Restore all vouches (Owner only)
 
+## Security
+
+- Never commit your `config.json` file
+- Keep your bot token secure
+- The bot uses rate limiting to prevent spam
+
 ## License
 
-This project is private and exclusive. Unauthorized use or distribution is prohibited. 
+This project is private and exclusive. Unauthorized use or distribution is prohibited.
+
+If you find this project useful, consider giving it a star on GitHub! ⭐

@@ -1,31 +1,19 @@
 const { EmbedBuilder } = require('discord.js');
 const fs = require('fs');
 const config = require('../config/config.json');
-
-// Constants
-const VOUCH_FILE = 'information.json';
-const EMBED_COLOR = 0x2B2D31;
-const RATE_LIMIT_DELAY = 2500;
-
-// Error messages
-const ERRORS = {
-  NO_PERMISSION: 'You do not have permission to use this command.',
-  NO_VOUCH_DATA: 'No vouch data found to restore.',
-  NO_CHANNEL: 'Vouch channel not found. Please check your configuration!',
-  NO_CONFIG: 'Vouch channel ID is not defined in the configuration!',
-  SUBMISSION_SUCCESS: 'Your vouch has been submitted successfully!'
-};
+const { PATHS, COLORS, RATE_LIMITS, ERRORS } = require('../config/constants');
 
 class VouchService {
   constructor() {
     this.vouchData = [];
+    this.userVouchCounts = new Map();
     this.loadVouchData();
   }
 
   async loadVouchData() {
     try {
-      if (fs.existsSync(VOUCH_FILE)) {
-        const rawData = fs.readFileSync(VOUCH_FILE);
+      if (fs.existsSync(PATHS.VOUCH_DATA)) {
+        const rawData = fs.readFileSync(PATHS.VOUCH_DATA);
         this.vouchData = JSON.parse(rawData);
       }
     } catch (error) {
@@ -36,11 +24,22 @@ class VouchService {
 
   async saveVouchData() {
     try {
-      fs.writeFileSync(VOUCH_FILE, JSON.stringify(this.vouchData, null, 2));
+      fs.writeFileSync(PATHS.VOUCH_DATA, JSON.stringify(this.vouchData, null, 2));
     } catch (error) {
       console.error('Error saving vouch data:', error);
       throw new Error('Failed to save vouch data');
     }
+  }
+
+  isRateLimited(userId) {
+    const now = Date.now();
+    const userVouches = this.userVouchCounts.get(userId) || [];
+    
+    // Remove vouches older than 1 hour
+    const recentVouches = userVouches.filter(time => now - time < 3600000);
+    this.userVouchCounts.set(userId, recentVouches);
+    
+    return recentVouches.length >= RATE_LIMITS.MAX_VOUCHES_PER_HOUR;
   }
 
   createVouchEmbed(userData, isNew = true) {
@@ -48,7 +47,7 @@ class VouchService {
     const emptyStars = '☆'.repeat(5 - userData.rating);
 
     return new EmbedBuilder()
-      .setColor(EMBED_COLOR)
+      .setColor(COLORS.EMBED)
       .setAuthor({
         name: isNew ? 'New Vouch' : 'Restored Vouch',
         iconURL: userData.guildIcon
@@ -67,6 +66,11 @@ class VouchService {
 
   async submitVouch(interaction) {
     try {
+      // Check rate limit
+      if (this.isRateLimited(interaction.user.id)) {
+        return interaction.reply({ content: ERRORS.RATE_LIMIT, ephemeral: true });
+      }
+
       const review = interaction.options.getString('review');
       const stars = interaction.options.getInteger('stars');
       const attachment = interaction.options.getAttachment('attachment');
@@ -87,6 +91,11 @@ class VouchService {
       this.vouchData.push(userData);
       await this.saveVouchData();
 
+      // Update rate limit counter
+      const userVouches = this.userVouchCounts.get(interaction.user.id) || [];
+      userVouches.push(Date.now());
+      this.userVouchCounts.set(interaction.user.id, userVouches);
+
       const embed = this.createVouchEmbed(userData, true);
       if (attachment) {
         embed.setImage(attachment.url);
@@ -100,7 +109,7 @@ class VouchService {
 
     } catch (error) {
       console.error('Error submitting vouch:', error);
-      await interaction.reply({ content: 'An error occurred while submitting your vouch.', ephemeral: true });
+      await interaction.reply({ content: ERRORS.COMMAND_ERROR, ephemeral: true });
     }
   }
 
@@ -112,7 +121,7 @@ class VouchService {
 
       await interaction.deferReply({ ephemeral: true });
 
-      if (!fs.existsSync(VOUCH_FILE)) {
+      if (!fs.existsSync(PATHS.VOUCH_DATA)) {
         return interaction.editReply({ content: ERRORS.NO_VOUCH_DATA, ephemeral: true });
       }
 
@@ -132,14 +141,14 @@ class VouchService {
         }
 
         await vouchChannel.send({ embeds: [embed] });
-        await new Promise(resolve => setTimeout(resolve, RATE_LIMIT_DELAY));
+        await new Promise(resolve => setTimeout(resolve, RATE_LIMITS.RESTORE_DELAY));
       }
 
       await interaction.editReply({ content: 'All vouches have been restored.', ephemeral: true });
 
     } catch (error) {
       console.error('Error restoring vouches:', error);
-      await interaction.editReply({ content: 'An error occurred while restoring vouches.', ephemeral: true });
+      await interaction.editReply({ content: ERRORS.COMMAND_ERROR, ephemeral: true });
     }
   }
 
