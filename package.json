@@ -1,0 +1,25 @@
+{
+  "name": "vouchbot",
+  "version": "1.0.0",
+  "description": "A Discord bot for managing vouches and reviews",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "vouch",
+    "reviews"
+  ],
+  "author": "",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "discord.js": "^14.14.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.3"
+  }
+}

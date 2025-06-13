@@ -1,0 +1,7 @@
+{
+  "token": "YOUR_BOT_TOKEN",
+  "clientId": "YOUR_CLIENT_ID",
+  "guildId": "YOUR_GUILD_ID",
+  "vouchChannelId": "YOUR_VOUCH_CHANNEL_ID",
+  "ownerId": "YOUR_OWNER_ID"
+} 
