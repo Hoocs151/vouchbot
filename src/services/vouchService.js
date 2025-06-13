@@ -1,6 +1,6 @@
 const { EmbedBuilder } = require('discord.js');
 const fs = require('fs');
-const config = require('../../config/config.json');
+const config = require('../config/config.json');
 
 // Constants
 const VOUCH_FILE = 'information.json';

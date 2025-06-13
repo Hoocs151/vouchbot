@@ -1,5 +1,5 @@
 const { Client, GatewayIntentBits, Events, ActivityType } = require('discord.js');
-const config = require('./config.json');
+const config = require('./src/config/config.json');
 const { loadCommands } = require('./commands');
 const { restoreVouches, submitVouch } = require('./vouches');
 

@@ -1,7 +1,7 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
-const config = require('../../config/config.json');
+const config = require('../config/config.json');
 
 // Command definitions
 const commands = [

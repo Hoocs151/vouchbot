@@ -2,7 +2,7 @@ const { Client, GatewayIntentBits, Events, ActivityType } = require('discord.js'
 const { loadCommands } = require('./commands/commandManager');
 const { handleInteraction } = require('./events/interactionHandler');
 const { setupReadyEvent } = require('./events/readyHandler');
-const config = require('../config/config.json');
+const config = require('./config/config.json');
 
 // Constants
 const REQUIRED_INTENTS = [
