@@ -1,4 +1,4 @@
-# VouchBot
+# Basic VouchBot
 
 A Discord bot for managing vouches and reviews.
 
