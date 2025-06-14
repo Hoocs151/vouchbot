@@ -14,18 +14,48 @@ const REQUIRED_INTENTS = [
 const ERRORS = {
   TOKEN_MISSING: 'Error: Token is missing in config.json',
   UNKNOWN_COMMAND: 'Unknown command.',
-  COMMAND_ERROR: 'An error occurred while processing the command.'
+  COMMAND_ERROR: 'An error occurred while processing the command.',
+  INTERACTION_FAILED: 'Failed to process the interaction.',
+  STARTUP_ERROR: 'Failed to initialize the bot.'
 };
 
 class Bot {
   constructor() {
-    this.client = new Client({ intents: REQUIRED_INTENTS });
+    this.client = new Client({ 
+      intents: REQUIRED_INTENTS,
+      failIfNotExists: false, // More resilient handling of deleted messages/users
+      retryLimit: 3 // Add retry mechanism for failed requests
+    });
     this.setupEventHandlers();
+    this.setupErrorHandlers();
+  }
+
+  setupErrorHandlers() {
+    process.on('unhandledRejection', (error) => {
+      console.error('Unhandled promise rejection:', error);
+    });
+
+    process.on('uncaughtException', (error) => {
+      console.error('Uncaught exception:', error);
+      // Gracefully shutdown
+      this.shutdown(1);
+    });
+
+    this.client.on('error', (error) => {
+      console.error('Discord client error:', error);
+    });
+
+    this.client.on('warn', (warning) => {
+      console.warn('Discord client warning:', warning);
+    });
   }
 
   setupEventHandlers() {
     // Ready event
-    this.client.once(Events.ClientReady, () => setupReadyEvent(this.client));
+    this.client.once(Events.ClientReady, () => {
+      setupReadyEvent(this.client);
+      console.log(`Logged in as ${this.client.user.tag}`);
+    });
 
     // Interaction event
     this.client.on(Events.InteractionCreate, async interaction => {
@@ -41,15 +71,37 @@ class Bot {
   }
 
   async handleError(interaction, error) {
-    const errorMessage = interaction.replied || interaction.deferred
-      ? { content: ERRORS.COMMAND_ERROR, ephemeral: true }
-      : { content: ERRORS.COMMAND_ERROR, ephemeral: true };
+    const errorMessage = {
+      content: ERRORS.COMMAND_ERROR,
+      ephemeral: true,
+      components: [] // Clear any components on error
+    };
 
     try {
-      await interaction.reply(errorMessage);
+      if (interaction.replied || interaction.deferred) {
+        await interaction.editReply(errorMessage);
+      } else {
+        await interaction.reply(errorMessage);
+      }
     } catch (e) {
       console.error('Error sending error message:', e);
+      // Attempt to send a followUp as last resort
+      try {
+        await interaction.followUp({ ...errorMessage, ephemeral: true });
+      } catch (finalError) {
+        console.error('Failed to send any error response:', finalError);
+      }
     }
+  }
+
+  async shutdown(code = 0) {
+    console.log('Shutting down bot...');
+    try {
+      await this.client.destroy();
+    } catch (error) {
+      console.error('Error during shutdown:', error);
+    }
+    process.exit(code);
   }
 
   async start() {
@@ -57,15 +109,27 @@ class Bot {
       // Load commands
       await loadCommands(this.client);
 
-      // Login
+      // Validate config
       if (!config.token) {
         throw new Error(ERRORS.TOKEN_MISSING);
       }
 
-      await this.client.login(config.token);
+      // Login with automatic retry
+      let retries = 3;
+      while (retries > 0) {
+        try {
+          await this.client.login(config.token);
+          break;
+        } catch (error) {
+          retries--;
+          if (retries === 0) throw error;
+          console.warn(`Login failed, retrying... (${retries} attempts remaining)`);
+          await new Promise(resolve => setTimeout(resolve, 5000));
+        }
+      }
     } catch (error) {
       console.error('Failed to start bot:', error);
-      process.exit(1);
+      this.shutdown(1);
     }
   }
 }
