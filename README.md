@@ -5,7 +5,7 @@ A specialized Discord bot for managing customer reviews and seller reputation in
 ## Preview
 
 ### Vouch Display
-![Vouch Display](https://cdn.discordapp.com/attachments/1255155199329177672/1383195214830764182/image.png?ex=684de86d&is=684c96ed&hm=cd553e183cde2841a97e4db99bf04097614a3de72217ed2e644a4ad1812d56aa&)
+![Vouch Display](https://cdn.discordapp.com/attachments/1255155199329177672/1383482003088871556/image.png?ex=684ef385&is=684da205&hm=735ddd1db8d8fe33049aa5078cbb2a3cc52b23c3742758ee1426b7590260ec7f&)
 *Clean and professional vouch display with ratings*
 
 ### Command Interface
