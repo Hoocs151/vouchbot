@@ -1,6 +1,8 @@
+const path = require('path');
+
 // File paths
 const PATHS = {
-  VOUCH_DATA: 'src/data/information.json'
+  VOUCH_DATA: path.join(__dirname, '..', 'data', 'information.json')
 };
 
 // Embed colors

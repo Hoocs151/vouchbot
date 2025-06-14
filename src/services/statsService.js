@@ -15,7 +15,7 @@ class StatsService {
     try {
       // Read vouch data if exists
       if (fs.existsSync(PATHS.VOUCH_DATA)) {
-        const rawData = fs.readFileSync(PATHS.VOUCH_DATA);
+        const rawData = fs.readFileSync(PATHS.VOUCH_DATA, 'utf8');
         const vouchData = JSON.parse(rawData);
         
         // Calculate statistics
@@ -35,9 +35,16 @@ class StatsService {
 
         this.stats.totalUsers = uniqueUsers.size;
         this.stats.activeVouchers = activeCount;
+      } else {
+        console.log('Vouch data file does not exist at:', PATHS.VOUCH_DATA);
       }
     } catch (error) {
       console.error('Error updating stats:', error);
+      console.error('Error details:', {
+        message: error.message,
+        stack: error.stack,
+        path: PATHS.VOUCH_DATA
+      });
     }
   }
 
