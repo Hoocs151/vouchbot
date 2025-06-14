@@ -47,8 +47,6 @@ class VouchService {
     const emptyStars = '☆'.repeat(5 - userData.rating);
     const timestamp = new Date(userData.timestamp);
 
-    // Format the rating text based on stars
-
     const embed = new EmbedBuilder()
       .setColor(this.getRatingColor(userData.rating))
       .setAuthor({
@@ -61,8 +59,7 @@ class VouchService {
         '> ' + userData.review.split('\n').join('\n> '),
         '',
         `• From: <@${userData.authorId}>`,
-        `-# Date: <t:${Math.floor(timestamp.getTime() / 1000)}:R>`,
-        userData.proof ? `• Proof: ${userData.proof}` : '',
+        `-# Date: <t:${Math.floor(timestamp.getTime() / 1000)}:R>`
       ].filter(Boolean).join('\n'))
       .setThumbnail(userData.avatar);
 
@@ -105,7 +102,6 @@ class VouchService {
 
       const review = interaction.options.getString('review');
       const stars = interaction.options.getInteger('stars');
-      const proof = interaction.options.getString('proof');
       const attachment = interaction.options.getAttachment('attachment');
 
       const id = this.vouchData.length + 1;
@@ -117,7 +113,6 @@ class VouchService {
         guildIcon: interaction.guild.iconURL({ dynamic: true }),
         rating: stars,
         review,
-        proof,
         timestamp: new Date().toISOString(),
         attachment: attachment ? attachment.url : null
       };

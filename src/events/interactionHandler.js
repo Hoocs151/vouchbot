@@ -2,6 +2,8 @@ const { MessageFlags } = require('discord.js');
 const { submitVouch, restoreVouches } = require('../services/vouchService');
 
 async function handleInteraction(interaction) {
+  if (!interaction.isCommand()) return;
+  
   switch (interaction.commandName) {
     case 'vouch':
       await submitVouch(interaction);
@@ -17,6 +19,4 @@ async function handleInteraction(interaction) {
   }
 }
 
-module.exports = {
-  handleInteraction
-}; 
+module.exports = { handleInteraction }; 

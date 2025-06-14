@@ -6,7 +6,6 @@ const PATHS = {
 // Embed colors
 const COLORS = {
   EMBED: 0x2B2D31,
-  SHOP: 0x5865F2,    // Discord Blurple
   SUCCESS: 0x57F287, // Green
   WARNING: 0xFEE75C, // Yellow
   ERROR: 0xED4245    // Red
@@ -25,17 +24,12 @@ const ERRORS = {
   NO_CHANNEL: 'Channel not found. Please check your configuration!',
   NO_CONFIG: 'Channel ID is not defined in the configuration!',
   SUBMISSION_SUCCESS: '✅ Your vouch has been submitted successfully!',
-  SHOP_SUCCESS: '🛍️ Your review has also been posted to the shop channel!',
-  TOKEN_MISSING: 'Error: Token is missing in config.json',
-  UNKNOWN_COMMAND: 'Unknown command.',
-  COMMAND_ERROR: 'An error occurred while processing the command.',
-  RATE_LIMIT: '⏰ You have reached the maximum number of vouches allowed per hour. Please try again later.'
+  RATE_LIMIT: '⏰ You have reached the maximum number of vouches allowed per hour.'
 };
 
 // Command options
 const COMMAND_OPTIONS = {
-  REVIEW_MAX_LENGTH: 1000,
-  SHOP_TITLE_MAX_LENGTH: 100
+  REVIEW_MAX_LENGTH: 1000
 };
 
 module.exports = {
