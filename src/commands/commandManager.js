@@ -21,17 +21,17 @@ const commands = [
         .setDescription('Rating in stars')
         .setRequired(true)
         .addChoices(
-          { name: '⭐⭐⭐⭐⭐', value: 5 },
-          { name: '⭐⭐⭐⭐', value: 4 },
-          { name: '⭐⭐⭐', value: 3 },
-          { name: '⭐⭐', value: 2 },
-          { name: '⭐', value: 1 }
+          { name: '⭐⭐⭐⭐⭐ Excellent', value: 5 },
+          { name: '⭐⭐⭐⭐ Very Good', value: 4 },
+          { name: '⭐⭐⭐ Good', value: 3 },
+          { name: '⭐⭐ Fair', value: 2 },
+          { name: '⭐ Poor', value: 1 }
         )
     )
     .addAttachmentOption(option =>
       option
         .setName('attachment')
-        .setDescription('Optional attachment')
+        .setDescription('Optional proof/screenshot')
         .setRequired(false)
     ),
   new SlashCommandBuilder()

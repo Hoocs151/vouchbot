@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits, Events, ActivityType } = require('discord.js');
+const { Client, GatewayIntentBits, Events, ActivityType, MessageFlags } = require('discord.js');
 const { loadCommands } = require('./commands/commandManager');
 const { handleInteraction } = require('./events/interactionHandler');
 const { setupReadyEvent } = require('./events/readyHandler');
@@ -73,8 +73,8 @@ class Bot {
   async handleError(interaction, error) {
     const errorMessage = {
       content: ERRORS.COMMAND_ERROR,
-      ephemeral: true,
-      components: [] // Clear any components on error
+      flags: MessageFlags.Ephemeral,
+      components: []
     };
 
     try {
@@ -85,9 +85,11 @@ class Bot {
       }
     } catch (e) {
       console.error('Error sending error message:', e);
-      // Attempt to send a followUp as last resort
       try {
-        await interaction.followUp({ ...errorMessage, ephemeral: true });
+        await interaction.followUp({
+          ...errorMessage,
+          flags: MessageFlags.Ephemeral
+        });
       } catch (finalError) {
         console.error('Failed to send any error response:', finalError);
       }

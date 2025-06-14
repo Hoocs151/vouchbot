@@ -1,3 +1,4 @@
+const { MessageFlags } = require('discord.js');
 const { submitVouch, restoreVouches } = require('../services/vouchService');
 
 async function handleInteraction(interaction) {
@@ -9,7 +10,10 @@ async function handleInteraction(interaction) {
       await restoreVouches(interaction);
       break;
     default:
-      await interaction.reply({ content: 'Unknown command.', ephemeral: true });
+      await interaction.reply({ 
+        content: 'Unknown command.',
+        flags: MessageFlags.Ephemeral
+      });
   }
 }
 
