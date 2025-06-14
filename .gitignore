@@ -4,7 +4,6 @@ node_modules/
 # Environment
 .env
 src/config/config.json
-src/data/information.json
 
 # Logs
 logs
@@ -26,3 +25,4 @@ pids
 # OS
 .DS_Store
 Thumbs.db 
+src/data/information.json
