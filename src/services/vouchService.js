@@ -52,7 +52,7 @@ class VouchService {
         name: isNew ? 'New Vouch' : 'Restored Vouch',
         iconURL: userData.guildIcon
       })
-      .setDescription(`**Author:** <@${userData.authorId}>\n**Rating:** ${starsEmoji}${emptyStars}\n\n\`\`\`${userData.review}\`\`\``)
+      .setDescription(`**Author:** <@${userData.authorId}>\n**Rating:** ${starsEmoji}\`${emptyStars}\`\n\n\`\`\`${userData.review}\`\`\``)
       .setThumbnail(userData.avatar)
       .setFooter({ 
         text: `Vouch #${userData.id} • ${new Date(userData.timestamp).toLocaleDateString('en-US', { 
