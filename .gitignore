@@ -4,6 +4,7 @@ node_modules/
 # Environment
 .env
 src/config/config.json
+src/data/information.json
 
 # Logs
 logs
